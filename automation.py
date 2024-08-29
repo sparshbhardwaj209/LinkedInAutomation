@@ -1,0 +1,186 @@
+# setting up the dependencies
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+import time
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import pandas as pd
+import os
+
+polls = [
+"Which front-end framework do you prefer?,React,Angular,Vue.js,Svelte",
+"What is your favorite back-end framework?,Node.js,Django,Flask,Spring Boot"
+]
+
+#setting up the chrome driver path
+service = Service(ChromeDriverManager().install())
+options = Options()
+options.headless = False  # Set to True if you want to run headless
+
+driver = webdriver.Chrome(service=service, options=options)
+driver.get("https://www.linkedin.com/login")
+
+# input("Press Enter to close the browser and end the script...")
+
+
+try:
+    WebDriverWait(driver, 40).until(
+        EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'share-box-feed-entry')]"))
+    )
+    print("Successfully logged in!")
+except Exception as e:
+    print(f"Failed to log in. Exiting. {e}")
+    driver.quit()
+    exit()
+
+# Load or create the Excel file for tracking polls
+excel_file = 'poll_tracking.xlsx'
+if os.path.exists(excel_file):
+    tracking_df = pd.read_excel(excel_file)
+else:
+    tracking_df = pd.DataFrame(columns=['Poll', 'Status'])
+
+
+try:
+    close_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Dismiss']"))
+    )
+    close_button.click()
+except:
+    print("No pop-up to dismiss")
+
+
+for poll_data in polls:
+    if poll_data.strip() == "":
+        continue
+
+    # splitting the polls data by commas
+    poll_parts = poll_data.split(',')
+    question = poll_parts[0].strip()
+    answers = [answer.strip() for answer in poll_parts[1:]]
+    print(f"reading poll:  '{question}'  with answer: {answers}")
+
+    if question in tracking_df['Poll'].values:
+        continue  # Skip already posted polls
+
+    print(f"Poll '{question}' with answers: {answers}")
+
+    try:
+        # Step 1:
+        print("waiting for start a post button...")
+        WebDriverWait(driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'artdeco-button') and contains(@class, 'share-box-feed-entry__trigger')]"))
+        ).click()
+        print("Clicked on 'Start a post' button successfully!")
+        
+        # Step 2: Click "For More" button (assuming this step is needed)
+        print("Waiting for 'For More' button...")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[5]/div/span/button/span"))
+        ).click()
+        print("Clicked on 'For More' button successfully!")
+
+
+        # Step 3: Click "Create a poll" button
+        print("waiting for create a poll button..")
+        WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[6]/div/div/span/button/span"))
+        ).click()
+        print("Clicked on 'Create a poll' button successfully!")
+
+        # Step 4: Fill in the poll data
+        # Locate the question input field using a dynamic XPath
+        question_input = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[1]/div/div/textarea")
+        question_input.clear()  # Clear the field first (if necessary)
+        question_input.send_keys(question)
+        print("Question written successfully")
+        time.sleep(5)
+
+
+
+        # Now click "Add option" twice to create a total of four fields
+        # for _ in range(2):
+        #     add_option_button = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[4]/button")
+        #     # /html/body/div[3]/div/div/div/div[2]/div/form/div[4]/button/span
+        #     add_option_button.click()
+        #     time.sleep(1)  # Short delay to ensure the option is added
+
+        # Generalized XPath to match both input fields
+        answer_fields = driver.find_elements(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[position()>1]/div[2]/div/input")
+
+        # Debug: Print the number of input fields found
+        print(f"Number of answer fields found: {len(answer_fields)}")
+
+        
+        # Fill in the poll answers
+        for i in range(2):
+            if i < len(answer_fields):
+                answer_fields[i].send_keys(answers[i])
+            else:
+                print(f"Not enough input fields for all answers. Needed {len(answers)}, found {len(answer_fields)}.")
+
+        # Now click "Add option" to add the third field and fill the third answer
+        add_option_button = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[4]/button/span")
+        add_option_button.click()
+        time.sleep(1)  # Short delay to ensure the option is added
+
+        # Find the newly added field and fill in the third answer
+        answer_fields = driver.find_elements(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[position()>1]/div[2]/div/input")
+        answer_fields[2].send_keys(answers[2])
+
+        # Click "Add option" again to add the fourth field and fill the fourth answer
+        add_option_button.click()
+        time.sleep(1)  # Short delay to ensure the option is added
+
+        # Find the newly added field and fill in the fourth answer
+        answer_fields = driver.find_elements(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[position()>1]/div[2]/div/input")
+        answer_fields[3].send_keys(answers[3])
+
+        # Step 5: Set poll duration to 2 weeks
+        print("setting poll duration of 2 weeks")
+        duration_dropdown = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/select")
+        duration_dropdown.click()
+        time.sleep(1)
+        duration_dropdown.find_element(By.XPATH, "//option[contains(text(), '2 weeks')]").click()
+    
+        print("duration set for the poll")
+
+        # Step 6: Click Done and Post
+        time.sleep(1)
+        print("clicking the done button")
+
+        done_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div/div/button[2]/span"))
+        )
+        done_button.click()
+        print("Done button clicked")
+
+        time.sleep(2)   
+        post_button = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div/div[2]/div[4]/div/div[2]/button/span")))
+        post_button.click()
+        print("Post button clicked, poll posted successfully!")    
+
+        # Track the posted poll
+        # Add the new row to the DataFrame using pd.concat
+        new_row = pd.DataFrame({"Poll": [question], "Status": ["Posted"]})
+        tracking_df = pd.concat([tracking_df, new_row], ignore_index=True)
+
+        # Save the updated DataFrame to Excel
+        tracking_df.to_excel(excel_file, index=False)
+
+        print(f"Poll '{question}' posted successfully!")
+        time.sleep(20)
+    except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            driver.quit()
+            exit()
+
+# Close the driver
+# driver.quit()
+
+
+

@@ -1,0 +1,66 @@
+Which front-end framework do you prefer?,React,Angular,Vue.js,Svelte
+What is your favorite back-end framework?,Node.js,Django,Flask,Spring Boot
+Which database do you prefer?,MySQL,PostgreSQL,MongoDB,SQLite
+What version control system do you use?,Git,Subversion,Mercurial,CVS
+Which DevOps tool do you prefer?,Docker,Kubernetes,Jenkins,Ansible
+What is your preferred text editor?,VS Code,Sublime Text,Atom,Notepad++
+Which operating system do you prefer for development?,Linux,Windows,macOS,BSD
+What is your favorite programming paradigm?,Object-Oriented Programming,Functional Programming,Procedural Programming,Declarative Programming
+Which CSS preprocessor do you prefer?,Sass,Less,Stylus,PostCSS
+What is your preferred method of testing?,Unit Testing,Integration Testing,End-to-End Testing,Acceptance Testing
+Which CI/CD tool do you prefer?,Travis CI,CircleCI,GitLab CI,Jenkins
+Which JavaScript runtime environment do you prefer?,Node.js,Deno,Bun,Nashorn
+What is your favorite mobile development platform?,React Native,Flutter,Swift,Kotlin
+Which API style do you prefer?,REST,GraphQL,SOAP,gRPC
+What is your preferred deployment strategy?,Blue/Green Deployment,Rolling Deployment,Canary Deployment,Recreate Deployment
+Which cloud database service do you prefer?,Amazon RDS,Azure SQL Database,Google Cloud SQL,IBM Db2 on Cloud
+Which NoSQL database do you prefer?,MongoDB,Cassandra,Couchbase,DynamoDB
+What is your preferred data visualization tool?,Tableau,Power BI,D3.js,Google Data Studio
+Which language do you prefer for machine learning?,Python,R,Julia,Scala
+Which code quality tool do you prefer?,ESLint,SonarQube,Prettier,Pylint
+What is your preferred web server?,Apache,Nginx,IIS,LiteSpeed
+Which design pattern do you use most?,Singleton,Factory,Observer,Strategy
+What is your preferred way to manage state in a React application?,Redux,Context API,MobX,Recoil
+Which software development methodology do you prefer?,Agile,Scrum,Waterfall,Kanban
+Which build tool do you prefer?,Maven,Gradle,Ant,Bazel
+What is your preferred container orchestration tool?,Kubernetes,Docker Swarm,OpenShift,Mesos
+Which cloud storage service do you prefer?,AWS S3,Google Cloud Storage,Azure Blob Storage,IBM Cloud Object Storage
+Which continuous monitoring tool do you prefer?,Prometheus,Grafana,Nagios,Splunk
+Which IDE do you prefer for Java development?,IntelliJ IDEA,Eclipse,NetBeans,Visual Studio Code
+Which front-end build tool do you prefer?,Webpack,Parcel,Gulp,Rollup
+What is your preferred cloud function service?,AWS Lambda,Google Cloud Functions,Azure Functions,IBM Cloud Functions
+Which package manager do you prefer for JavaScript?,npm,Yarn,pnpm,Bower
+Which web security practice do you prioritize?,HTTPS,Content Security Policy,Cross-Origin Resource Sharing (CORS),Data Encryption
+What is your preferred data structure?,Array,Linked List,HashMap,Binary Tree
+Which API testing tool do you prefer?,Postman,SoapUI,Insomnia,Paw
+What is your favorite Python web framework?,Django,Flask,FastAPI,Pyramid
+Which tool do you prefer for code collaboration?,GitHub,GitLab,Bitbucket,Azure DevOps
+Which agile tool do you prefer?,Jira,Trello,Asana,Monday.com
+What is your preferred UI component library?,Material-UI,Ant Design,Bootstrap,Tailwind CSS
+Which tool do you prefer for code documentation?,Javadoc,Sphinx,Doxygen,MkDocs
+Which web analytics tool do you prefer?,Google Analytics,Matomo,Adobe Analytics,Mixpanel
+What is your preferred JavaScript testing framework?,Jest,Mocha,Jasmine,Cypress
+Which operating system do you prefer for server deployment?,Ubuntu,CentOS,Debian,Windows Server
+Which protocol do you prefer for file transfer?,FTP,SFTP,SCP,HTTP
+What is your preferred configuration management tool?,Ansible,Puppet,Chef,SaltStack
+Which tool do you prefer for log management?,ELK Stack,Splunk,Graylog,Fluentd
+Which JavaScript build tool do you prefer?,Babel,Webpack,Rollup,Parcel
+What is your preferred framework for .NET development?,ASP.NET Core,Blazor,Mono,Xamarin
+Which ORM (Object-Relational Mapping) tool do you prefer?,Hibernate,SQLAlchemy,Entity Framework,Django ORM
+Which testing strategy do you prefer?,Test-Driven Development (TDD),Behavior-Driven Development (BDD),Acceptance Test-Driven Development (ATDD),Exploratory Testing
+What is your preferred virtualization software?,VMware,VirtualBox,Hyper-V,KVM
+Which CSS framework do you prefer?,Bootstrap,Foundation,Bulma,Tailwind CSS
+Which IDE do you prefer for Python development?,PyCharm,VS Code,Sublime Text,Spyder
+Which testing library do you prefer for React?,React Testing Library,Enzyme,Jest,Cypress
+Which cloud service do you prefer for AI/ML?,AWS SageMaker,Google AI Platform,Azure Machine Learning,IBM Watson
+Which API gateway do you prefer?,AWS API Gateway,Kong,Apigee,NGINX
+Which front-end testing tool do you prefer?,Selenium,Cypress,Puppeteer,TestCafe
+Which tool do you prefer for task automation?,Gulp,Grunt,Make,Task
+Which cloud platform do you prefer for serverless architecture?,AWS Lambda,Google Cloud Functions,Azure Functions,IBM Cloud Functions
+What is your preferred way to handle authentication in a web app?,OAuth,JWT (JSON Web Tokens),SAML,OpenID Connect
+Which tool do you prefer for project management?,Jira,Trello,Asana,Monday.com
+Which version of JavaScript do you prefer to use?,ES5,ES6 (ES2015),ES7 (ES2016),ES8 (ES2017)
+Which cloud-based IDE do you prefer?,AWS Cloud9,Gitpod,Replit,Visual Studio Codespaces
+What is your preferred method of container deployment?,Docker Compose,Kubernetes,OpenShift,Docker Swarm
+Which tool do you prefer for time-series data analysis?,InfluxDB,Prometheus,Graphite,TimescaleDB
+What is your preferred method of data serialization?,JSON,XML,YAML,Protocol Buffers
