@@ -9,22 +9,71 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 import os
+import socket
 
-polls = [
-"Which front-end framework do you prefer?,React,Angular,Vue.js,Svelte",
-"What is your favorite back-end framework?,Node.js,Django,Flask,Spring Boot"
-]
+# Function to check internet connectivity
+def check_internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (Google's DNS)
+    Port: 53/tcp
+    Returns: True if internet is connected, False otherwise
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error as ex:
+        print("No internet connection.")
+        return False
+
+# Wait until the internet connection is back
+def wait_for_internet():
+    print("Checking internet connection...")
+    while not check_internet():
+        print("Waiting for internet connection...")
+        time.sleep(5)
+    print("Internet connected!")
+
+
+# Read the poll data from the polls.txt file
+with open('polls.txt', 'r') as file:
+    polls = [line.strip() for line in file.readlines() if line.strip()]
 
 #setting up the chrome driver path
 service = Service(ChromeDriverManager().install())
 options = Options()
 options.headless = False  # Set to True if you want to run headless
 
+# Ensure we have internet before proceeding
+wait_for_internet()
+
 driver = webdriver.Chrome(service=service, options=options)
 driver.get("https://www.linkedin.com/login")
 
 # input("Press Enter to close the browser and end the script...")
 
+driver.find_element(By.ID, "username").send_keys("")
+driver.find_element(By.ID, "password").send_keys("")
+
+# Click the login button
+driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+# Handle 2FA if prompted
+try:
+
+    two_fa_input = WebDriverWait(driver, 30).until(
+        EC.presence_of_element_located((By.ID, "input__phone_verification_pin"))
+    )
+    # Prompt the user to input the 2FA code in the terminal
+    two_fa_code = input("Enter the 2FA code: ")
+    
+    # Enter the 2FA code into the input field
+    two_fa_input.send_keys(two_fa_code)
+
+    driver.find_element(By.XPATH, "//button[contains(text(), 'Submit')]").click()
+    print("2FA code entered successfully!")
+except Exception as e:
+    print("No 2FA required or could not locate 2FA input field.")
 
 try:
     WebDriverWait(driver, 40).until(
@@ -99,15 +148,6 @@ for poll_data in polls:
         print("Question written successfully")
         time.sleep(5)
 
-
-
-        # Now click "Add option" twice to create a total of four fields
-        # for _ in range(2):
-        #     add_option_button = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[4]/button")
-        #     # /html/body/div[3]/div/div/div/div[2]/div/form/div[4]/button/span
-        #     add_option_button.click()
-        #     time.sleep(1)  # Short delay to ensure the option is added
-
         # Generalized XPath to match both input fields
         answer_fields = driver.find_elements(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[position()>1]/div[2]/div/input")
 
@@ -178,9 +218,4 @@ for poll_data in polls:
             print(f"An error occurred: {str(e)}")
             driver.quit()
             exit()
-
-# Close the driver
-# driver.quit()
-
-
 
