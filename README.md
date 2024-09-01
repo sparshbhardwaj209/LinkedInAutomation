@@ -58,7 +58,5 @@ If you want to post two polls:
 Update the `polls` list in `polls.txt`:
 
 ```python
-polls = [
     "Which front-end framework do you prefer?,React,Angular,Vue.js,Svelte",
     "What is your favorite back-end framework?,Node.js,Django,Flask,Spring Boot"
-]
