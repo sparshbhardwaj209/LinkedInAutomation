@@ -10,6 +10,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 import os
 import socket
+import pickle
 
 # Function to check internet connectivity
 def check_internet(host="8.8.8.8", port=53, timeout=3):
@@ -43,37 +44,53 @@ with open('polls.txt', 'r') as file:
 service = Service(ChromeDriverManager().install())
 options = Options()
 options.headless = False  # Set to True if you want to run headless
-
+driver = webdriver.Chrome(service=service, options=options)
 # Ensure we have internet before proceeding
 wait_for_internet()
 
-driver = webdriver.Chrome(service=service, options=options)
-driver.get("https://www.linkedin.com/login")
+# Load cookies if they exist
+cookies_file = "linkedin_cookies.pkl"
+if os.path.exists(cookies_file):
+    driver.get("https://www.linkedin.com")
+    with open(cookies_file, "rb") as file:
+        cookies = pickle.load(file)
+        for cookie in cookies:
+            driver.add_cookie(cookie)
+    driver.refresh()
+else:
+    # No cookies found, prompt for username and password
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.get("https://www.linkedin.com/login")
 
-# input("Press Enter to close the browser and end the script...")
+    # input("Press Enter to close the browser and end the script...")
 
-driver.find_element(By.ID, "username").send_keys("")
-driver.find_element(By.ID, "password").send_keys("")
+    driver.find_element(By.ID, "username").send_keys("")
+    driver.find_element(By.ID, "password").send_keys("")
 
-# Click the login button
-driver.find_element(By.XPATH, "//button[@type='submit']").click()
+    # Click the login button
+    driver.find_element(By.XPATH, "//button[@type='submit']").click()
 
-# Handle 2FA if prompted
-try:
+    # Handle 2FA if prompted
+    try:
+        two_fa_input = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, "input__phone_verification_pin"))
+        )
+        # Prompt the user to input the 2FA code in the terminal
+        two_fa_code = input("Enter the 2FA code: ")
 
-    two_fa_input = WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located((By.ID, "input__phone_verification_pin"))
-    )
-    # Prompt the user to input the 2FA code in the terminal
-    two_fa_code = input("Enter the 2FA code: ")
+        # Enter the 2FA code into the input field
+        two_fa_input.send_keys(two_fa_code)
+
+        driver.find_element(By.XPATH, "//button[contains(text(), 'Submit')]").click()
+        print("2FA code entered successfully!")
+    except Exception as e:
+        print("No 2FA required or could not locate 2FA input field.")   
     
-    # Enter the 2FA code into the input field
-    two_fa_input.send_keys(two_fa_code)
-
-    driver.find_element(By.XPATH, "//button[contains(text(), 'Submit')]").click()
-    print("2FA code entered successfully!")
-except Exception as e:
-    print("No 2FA required or could not locate 2FA input field.")
+    # Save cookies after successful login
+    cookies = driver.get_cookies()
+    with open(cookies_file, "wb") as file:
+        pickle.dump(cookies, file)
+    print("Cookies saved!")
 
 try:
     WebDriverWait(driver, 40).until(
