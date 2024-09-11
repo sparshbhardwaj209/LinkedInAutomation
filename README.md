@@ -19,7 +19,7 @@ This Python script automates the process of creating and posting polls on Linked
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/sparshbhardwaj209/linkedin-poll-automation.git
+   git clone https://github.com/sparshbhardwaj209/LinkedInAutomation.git
 
 2. Install the required Python packages:
     ```bash
@@ -36,7 +36,7 @@ This Python script automates the process of creating and posting polls on Linked
 
 2. **Run the Script**:
     ```bash
-    python script.py
+    python automation.py
     ```
     The script will:
     - Open LinkedIn and log in.
