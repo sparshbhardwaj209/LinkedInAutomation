@@ -141,38 +141,43 @@ for poll_data in polls:
             EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'artdeco-button') and contains(@class, 'share-box-feed-entry__trigger')]"))
         ).click()
         print("Clicked on 'Start a post' button successfully!")
-        
-        # Step 2: Click "For More" button (assuming this step is needed)
+
+        # Step 2: Click "For More" button
         print("Waiting for 'For More' button...")
-        # WebDriverWait(driver, 20).until(
-        #     EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[5]/div/span/button/span"))
-        # ).click()
+
+        # Using WebDriverWait to locate the button with aria-label "More"
         WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='For More' and contains(@class, 'share-promoted-detour-button')]"))
+            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='More' and contains(@class, 'share-promoted-detour-button')]"))
         ).click()
         print("Clicked on 'For More' button successfully!")
 
 
         # Step 3: Click "Create a poll" button
-        print("waiting for create a poll button..")
-        # WebDriverWait(driver, 20).until(
-        #     EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[6]/div/div/span/button/span"))
-        # ).click()
+        print("Waiting for 'Create a poll' button...")
+
+        # Using WebDriverWait to locate the button with aria-label "Create a poll"
         WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Create a poll' and contains(@class, 'share-promoted-detour-button')]"))
         ).click()
+
         print("Clicked on 'Create a poll' button successfully!")
 
         # Step 4: Fill in the poll data
-        # Locate the question input field using a dynamic XPath
-        question_input = driver.find_element(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[1]/div/div/textarea")
+        print("Waiting for the question input field...")
+
+        # Locate the textarea input for the poll question
+        question_input = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//textarea[contains(@class, 'polls-detour__question-field')]"))
+        )
+
+        # Clear the input field and enter the question
         question_input.clear()  # Clear the field first (if necessary)
         question_input.send_keys(question)
         print("Question written successfully")
         time.sleep(5)
 
-        # Generalized XPath to match both input fields
-        answer_fields = driver.find_elements(By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/form/div[position()>1]/div[2]/div/input")
+        # Using a generalized XPath to find all input fields for poll answers
+        answer_fields = driver.find_elements(By.XPATH, "//input[contains(@class, 'polls-detour__form-fields') and contains(@class, 'artdeco-text-input--input')]")
 
         # Debug: Print the number of input fields found
         print(f"Number of answer fields found: {len(answer_fields)}")
@@ -222,10 +227,12 @@ for poll_data in polls:
         print("Done button clicked")
 
         time.sleep(2)   
+
         post_button = WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div/div[2]/div[4]/div/div[2]/button/span")))
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'artdeco-button--primary') and .//span[text()='Post']]"))
+        )
         post_button.click()
-        print("Post button clicked, poll posted successfully!")    
+        print("Post button clicked, poll posted successfully!")
 
         # Track the posted poll
         # Add the new row to the DataFrame using pd.concat
@@ -241,4 +248,3 @@ for poll_data in polls:
             print(f"An error occurred: {str(e)}")
             driver.quit()
             exit()
-

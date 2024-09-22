@@ -7,6 +7,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from datetime import datetime, timedelta
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 import pandas as pd
 import os
 import socket
@@ -144,22 +147,17 @@ for poll_data in polls:
         
         # Step 2: Click "For More" button (assuming this step is needed)
         print("Waiting for 'For More' button...")
-        # WebDriverWait(driver, 20).until(
-        #     EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[5]/div/span/button/span"))
-        # ).click()
+         # Using WebDriverWait to locate the button with aria-label "More"
         WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='For More' and contains(@class, 'share-promoted-detour-button')]"))
+                EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='More' and contains(@class, 'share-promoted-detour-button')]"))
         ).click()
         print("Clicked on 'For More' button successfully!")
 
 
         # Step 3: Click "Create a poll" button
         print("waiting for create a poll button..")
-        # WebDriverWait(driver, 20).until(
-        #     EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div[2]/div[2]/div[1]/div/section/div[2]/ul/li[6]/div/div/span/button/span"))
-        # ).click()
         WebDriverWait(driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Create a poll' and contains(@class, 'share-promoted-detour-button')]"))
+                EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Create a poll' and contains(@class, 'share-promoted-detour-button')]"))
         ).click()
         print("Clicked on 'Create a poll' button successfully!")
 
@@ -221,22 +219,106 @@ for poll_data in polls:
         done_button.click()
         print("Done button clicked")
 
-        time.sleep(2)   
-        post_button = WebDriverWait(driver, 20).until(
-        EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div/div[2]/div[4]/div/div[2]/button/span")))
-        post_button.click()
-        print("Post button clicked, poll posted successfully!")    
+        time.sleep(2)      
+
+        # here is the code to schedule the post
+        print("Clicking the 'Schedule Post' button")
+        schedule_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='Schedule post']"))  # Update this XPath if necessary
+        )
+        schedule_button.click()
+        time.sleep(1)
+
+        print("Clicked the 'Schedule Post' button successfully!")
+
+        # Step 1: Set the date for tomorrow or day after tomorrow
+        print("Setting the scheduled date")
+        date_picker = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "//input[@aria-label='Date']"))  # Locate the date picker input field
+        )
+        date_picker.click()
+        time.sleep(5)
+        # Calculate tomorrow's or day after tomorrow's date
+        schedule_date = datetime.now() + timedelta(days=1)  # Change days=2 for day after tomorrow
+        date_str = schedule_date.strftime("%m/%d/%Y")  # Format as needed
+
+        # Enter the date in the date picker input
+        date_picker.clear()
+        date_picker.send_keys(date_str)
+        print(f"Scheduled date set to {date_str}")
+
+        # Step 2: Click the 'Cancel' button using the provided XPath
+        cancel_button_xpath = "/html/body/div[3]/div/div/div/div[2]/div[1]/form/div[1]/div[2]/section/div/footer/button[2]"
+
+        # Wait until the cancel button is visible and clickable
+        cancel_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, cancel_button_xpath))
+        )
+        # Click the cancel button
+        cancel_button.click()
+        print("Cancel button clicked to close the date picker dialog box")
+        print("Date picker fully closed")
+        date_picker.send_keys(Keys.TAB)
+        time.sleep(5)
+
+        # Step 2: Set the time to 10:00 AM
+        print("Setting the scheduled time to 10:00 AM")
+        time_picker = WebDriverWait(driver, 20).until(
+        EC.visibility_of_element_located((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div[1]/form/div[2]/div/div[1]/div/input"))
+        )
+        # Use JavaScript to set the time value directly
+        time_script = """arguments[0].value = '10:00 AM';"""
+        driver.execute_script(time_script, time_picker)
+    
+        print("Scheduled time set to 10:00 AM using JavaScript")
+        time_picker.click()
+        time.sleep(10)
+
+        # Enter the time as 10:00 AM (adjust format if needed)
+        time_picker.clear()
+        time_picker.send_keys("10:00 AM")
+        print("Scheduled time set to 10:00 AM")
+        time.sleep(10)
+        # time_picker.send_keys(Keys.TAB)
+        sched_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[1]/div/h2"))  # Adjust XPath if needed
+        )
+        sched_button.click()
+
+        # Wait a moment before proceeding
+        time.sleep(5)
+        
+        next_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div[2]/div/button[2]/span"))  # Adjust XPath if needed
+        )
+        next_button.click()
+        print("Next button clicked")
+
+        time.sleep(5)  
+        
+        # Wait for scheduling to complete
+
+        # Wait for the "Schedule" button to be clickable
+        schedule_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div[2]/div/div/div[2]/div[4]/div/div[2]/button/span"))  # Adjust XPath if needed
+        )
+        schedule_button.click()
+        print("Schedule button clicked")
+
+        time.sleep(5)  # Wait for scheduling to complete
+
 
         # Track the posted poll
         # Add the new row to the DataFrame using pd.concat
-        new_row = pd.DataFrame({"Poll": [question], "Status": ["Posted"]})
+        new_row = pd.DataFrame({"Poll": [question], "Status": ["Scheduled"]})
         tracking_df = pd.concat([tracking_df, new_row], ignore_index=True)
+
 
         # Save the updated DataFrame to Excel
         tracking_df.to_excel(excel_file, index=False)
 
-        print(f"Poll '{question}' posted successfully!")
-        time.sleep(20)
+        # print(f"Poll '{question}' posted successfully!")
+        time.sleep(3)
     except Exception as e:
             print(f"An error occurred: {str(e)}")
             driver.quit()
